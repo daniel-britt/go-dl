@@ -24,10 +24,10 @@ func ytdlp_check() (string, bool) {
 func get_input() {
 	fmt.Println("Enter the URL of the YouTube Video to download:")
 	fmt.Scanf("%s", &user_url)
-	downloader()
+	downloader_prompt()
 }
 
-func downloader() {
+func downloader_prompt() {
 	user_home, _ := os.UserHomeDir()
 	cmd := exec.Command("yt-dlp", " "+user_url)
 	cmd.Dir = user_home + "/Videos/"
@@ -39,9 +39,27 @@ func downloader() {
 	}
 }
 
+func downloader_arguments() {
+	user_home, _ := os.UserHomeDir()
+	cmd := exec.Command("yt-dlp", " "+os.Args[1])
+	cmd.Dir = user_home + "/Videos/"
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
+}
+
 func main() {
 	if _, ytdlp_exists := ytdlp_check(); ytdlp_exists == true {
-		get_input()
+		if len(os.Args[1:]) == 0 {
+			get_input()
+		} else if len(os.Args[1]) == 1 {
+			downloader_arguments()
+		} else {
+			fmt.Println("Too many arguments.")
+		}
 	}
 
 }
