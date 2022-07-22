@@ -26,7 +26,15 @@ func ytdlp_check() (string, bool) {
 	return path, true
 }
 
-func check_playlist() bool {
+func check_playlist_arguments() bool {
+	is_playlist, err := regexp.MatchString("playlist", os.Args[1])
+	if err != nil {
+		log.Fatalf("regex for 'playlists' in provided URL failed with %s\n", err)
+	}
+	return is_playlist
+}
+
+func check_playlist_prompt() bool {
 	is_playlist, err := regexp.MatchString("playlist", user_url)
 	if err != nil {
 		log.Fatalf("regex for 'playlists' in provided URL failed with %s\n", err)
@@ -37,7 +45,7 @@ func check_playlist() bool {
 func get_input() {
 	fmt.Println("Enter the URL of the YouTube Video to download:")
 	fmt.Scanf("%s", &user_url)
-	is_playlist = check_playlist()
+	is_playlist = check_playlist_prompt()
 	downloader_prompt()
 }
 
@@ -97,12 +105,11 @@ func downloader_arguments() {
 }
 
 func main() {
-	fmt.Println(os.Args[0])
-	fmt.Println(os.Args[1])
 	if _, ytdlp_exists := ytdlp_check(); ytdlp_exists == true {
 		if len(os.Args[1:]) == 0 {
 			get_input()
 		} else if len(os.Args[1:]) == 1 {
+			is_playlist = check_playlist_arguments()
 			downloader_arguments()
 		} else {
 			fmt.Println("\nToo many arguments.")
