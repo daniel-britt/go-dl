@@ -21,15 +21,15 @@ func ytdlp_check() (string, bool) {
 	return path, true
 }
 
-func get_input() string {
+func get_input() {
 	fmt.Println("Enter the URL of the YouTube Video to download:")
-	fmt.Scanf("%s", user_url)
-	return user_url
+	fmt.Scanf("%s", &user_url)
+	downloader()
 }
 
-func downloader(string) {
+func downloader() {
 	user_home, _ := os.UserHomeDir()
-	cmd := exec.Command("yt-dlp " + user_url)
+	cmd := exec.Command("yt-dlp", " "+user_url)
 	cmd.Dir = user_home + "/Videos/"
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -42,7 +42,6 @@ func downloader(string) {
 func main() {
 	if _, ytdlp_exists := ytdlp_check(); ytdlp_exists == true {
 		get_input()
-		downloader(user_url)
 	}
 
 }
